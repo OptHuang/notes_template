@@ -8,14 +8,14 @@
 \newcommand{\bibfile}{\jobname.bib}  % Name of the BibTeX file.
 % ref.bib should be a symbolic link to the universal BibTeX file, which should be a local copy of
 % https://github.com/equipez/bibliographie/blob/main/ref.bib
-% Run `getbib` in the current directory under the draft mode to get the BibTeX file containing only
-% the cited references. The name will be xyz.bib if this TeX file is xyz.tex.
+% When the paper is finished, run `getbib` in the current directory to get the BibTeX file
+% containing only the cited references. The name will be xyz.bib if this TeX file is xyz.tex.
 \newcommand{\universalbib}{ref.bib}
 \ifdraft{\IfFileExists{\universalbib}{\renewcommand{\bibfile}{\universalbib}}{}}{}
+% 20221018: \iscite does not work as intended.
 % The counter `cite' is used to count the number of citations.
 \newcounter{cite}
 \pretocmd{\cite}{\stepcounter{cite}}{}{}
-
 
 %% Add line numbers in draft mode
 \RequirePackage[mathlines]{lineno}
@@ -23,10 +23,9 @@
 \renewcommand{\linenumberfont}{\normalfont\scriptsize\sffamily\color{gray}}
 \setlength{\linenumbersep}{\marginparsep}
 
-
 %% Geometry
-%\voffset=-1.5cm \hoffset=-1.4cm \textwidth=16cm \textheight=22.0cm  % Luis' setting
-\usepackage[a4paper, textwidth=16.0cm, textheight=22.0cm]{geometry}
+\voffset=-1.5cm \hoffset=-1.4cm \textwidth=16cm \textheight=22.0cm  % Luis' setting
+%\usepackage[a4paper, textwidth=16.0cm, textheight=22.0cm]{geometry}
 \renewcommand{\baselinestretch}{1.2}
 
 
@@ -71,7 +70,7 @@
 
 %% Todo notes
 \ifdraft{
-    \setlength{\marginparwidth}{2.42cm}
+    \setlength{\marginparwidth}{1.9cm}
     \usepackage[tickmarkheight=3pt,textsize=small,backgroundcolor=blue!16,linecolor=purple,bordercolor=purple]{todonotes}
 }{
     \newcommand{\todo}[1]{}
@@ -80,6 +79,7 @@
 
 
 %% Graph, tikz and pgf
+%\usepackage{subfigure}
 \setlength{\unitlength}{1mm}
 % The \unitlength command is a Length command. It defines the units used in the Picture Environment.
 \usepackage{graphicx}
@@ -89,8 +89,6 @@
 \usepackage{pgfplots}
 \usepackage{pgfplotstable}
 \usepackage[justification=centering]{caption}
-\usepackage{subcaption}  % Provides the subfigure environment
-%\usepackage{subfigure}  % Obsolete
 \usepgfplotslibrary{fillbetween}
 \pgfplotsset{compat=1.11}
 
@@ -111,14 +109,13 @@
 }{}
 
 
-%% Hyperref, url, and email
+%% Hyperref
 %% N.B.: DO NOT use `silence` together with `hyperref`. They will cause an infinite loop.
-\ifdraft{\usepackage{refcheck}\newcommand{\url}{\texttt}}{
+\ifdraft{\usepackage{refcheck}}{
     \usepackage{hyperref}
     \hypersetup{colorlinks, linkcolor=darkblue, anchorcolor=darkblue, citecolor=darkblue, urlcolor=darkblue}
     \usepackage{url}
 } % Check unused labels
-\newcommand{\email}{\texttt}
 
 
 %% Enumerate and itemize
@@ -136,7 +133,8 @@
 \algrenewcommand\algorithmicrequire{\textbf{Input:}}
 \algrenewcommand\algorithmicensure{\textbf{Output:}}
 \algrenewcommand\alglinenumber[1]{\normalsize #1.}
-\newcommand*\Let[2]{\State #1 $=$ #2}
+\newcommand*\Let[2]{\State #1~$=$ #2}
+\newcommand*{\norm}[2][]{#1\lVert #2 #1 \rVert}
 
 
 %% Theorem-like environments
@@ -148,12 +146,13 @@
 \newtheorem{problem}{Problem}[section]
 \newtheorem{proposition}{Proposition}[section]
 \newtheorem{assumption}{Assumption}[section]
+\newtheorem*{blanketassumption}{Blanket Assumption}
 \newtheorem{example}{Example}[section]
 \newtheorem{question}{Question}[section]
+\newtheorem{remark}{Remark}[section]
 % Change theoremstyle to ``definition'', which uses textnormal for the text.
 \theoremstyle{definition}
 \newtheorem{definition}{Definition}[section]
-\newtheorem{remark}{Remark}[section]
 % proof
 \usepackage{xpatch}
 \xpatchcmd{\proof}{\itshape}{\normalfont\proofnamefont}{}{}
@@ -181,7 +180,7 @@
 % Use @ to put 1 math unit (mu) in math
 % See https://nhigham.com/2013/01/07/fine-tuning-spacing-in-latex-equations/
 % and also TeXbook p. 155.
-\mathcode`@="8000{\catcode`\@=\active\gdef@{\mkern1mu}}
+\mathcode`@="8000{\catcode`\@=\active\gdef@{\mkern1mu}} %'
 
 
 %% Operators, commands
@@ -211,17 +210,19 @@
 \DeclareMathOperator{\essinf}{essinf}
 \DeclareMathOperator{\cl}{cl}
 \DeclareMathOperator{\vol}{vol}
-\DeclareMathOperator{\comp}{C}
 \DeclareMathOperator{\sign}{sign}
 \DeclareMathOperator{\rank}{rank}
 \DeclareMathOperator{\range}{range}
 \DeclareMathOperator{\card}{card}
 \DeclareMathOperator{\diam}{diam}
 \DeclareMathOperator{\dist}{dist}
+\DeclareMathOperator{\gap}{gap}
+\DeclareMathOperator{\clarke}{\partial_{\sss{\textnormal{C}\!}}}
 \newcommand{\disth}{{\operatorname{\updelta_{\sss{H}}}}}
 \newcommand{\ind}{\mathbbm{1}}
 %\newcommand*{\defeq}{\stackrel{\mbox{\normalfont\tiny{\textnormal{def}}}}{=}}
 \newcommand\defeq{\mathrel{\overset{\makebox[0pt]{\mbox{\normalfont\tiny\sffamily def}}}{=}}}
+\DeclareMathOperator{\lge}{\mbox{\larger{\larger{$\diamond$}}}}
 
 \newcommand{\RR}{\mathbb{R}}
 \newcommand{\BB}{\mathcal{B}}
@@ -229,26 +230,31 @@
 \newcommand{\TT}{\mathcal{T}}
 \newcommand{\ZZ}{\mathbb{Z}}
 \newcommand{\NN}{\mathbb{N}}
-\newcommand{\FF}{\mathcal{F}}
+\newcommand{\FFF}{\mathbb{F}}
+\newcommand{\GGG}{\mathbb{G}}
 \newcommand{\CC}{\mathbb{C}}
 \newcommand{\XX}{\mathcal{X}}
-\newcommand{\sset}{\mathcal{S}}
+\newcommand{\sol}{\mathcal{S}}
 \newcommand{\pen}{h}
 \newcommand{\penpar}{\mu}
 \newcommand{\res}{\rho}
 \newcommand{\col}{r}
-\newcommand{\ofd}{\mathcal{F}}
+\newcommand{\FF}{\mathcal{F}}
+
 \newcommand{\stf}[1]{\mathbb{S}^{#1}}
 \newcommand{\sss}[1]{{\scriptscriptstyle{#1}}}
 \newcommand{\sK}{{\scriptscriptstyle{K}}}
 \newcommand{\sT}{{\scriptscriptstyle{T}}}
 \newcommand{\fro}{{\scriptstyle{\textnormal{F}}}}
+\newcommand{\comp}{{\text{c}}}
 \newcommand{\trs}{{\scriptstyle{\mathsf{T}}}}
 \newcommand{\hmt}{{\scriptstyle{{\mathsf{H}}}}}
 \newcommand{\pin}{{\scriptstyle{{\mathsf{+}}}}}
 \newcommand{\inv}{{-1}}
 \newcommand{\adj}{*}
 \newcommand{\ones}{\mathbf{1}}
+\newcommand{\Mid}{\mathrel{\big|}}
+\newcommand{\MID}{\mathrel{\bigg|}}
 
 \newcommand{\cs}{\text{c}}
 \newcommand{\hp}{\circ}
@@ -264,12 +270,12 @@
 \newcommand{\tg}{{\textnormal{g}}}
 \newcommand{\ts}{{\textnormal{s}}}
 \newcommand{\st}{\textnormal{s.t.}}
-\newcommand{\etc}{{etc.}\xspace}
-\newcommand{\ie}{{i.e.}\xspace}
-\newcommand{\eg}{{e.g.}\xspace}
-\newcommand{\etal}{{et al.}\xspace}
-\newcommand{\iid}{\text{i.i.d.}\xspace}
-\newcommand{\as}{\text{a.s.}\xspace}
+\newcommand{\etc}{{etc.}}
+\newcommand{\ie}{{i.e.}}
+\newcommand{\eg}{{e.g.}}
+\newcommand{\etal}{{et al.}}
+\newcommand{\iid}{\text{i.i.d.}}
+\newcommand{\as}{{a.s.}\xspace}
 
 \newcommand{\me}{\mathrm{e}}
 \newcommand{\md}{\mathrm{d}}
@@ -300,11 +306,13 @@
 \newcommand{\xx}{\mathbf{x}}
 \renewcommand{\pp}{\mathbf{p}}
 \renewcommand{\ggg}{\mathbf{g}}
-\newcommand{\GG}{\mathbf{G}}
-\DeclareMathOperator{\expc}{\mathbb{E}}
-\DeclareMathOperator{\var}{Var}
-\DeclareMathOperator{\cov}{Cov}
+\newcommand{\GG}{\mathcal{G}}
 \renewcommand{\Pr}{\mathbb{P}}
+\newcommand{\expc}{\mathbb{E}}
+\newcommand{\cm}{\operatorname{cm}}
+\newcommand{\MD}{\mathcal{D}}
+\newcommand{\DD}{\mathfrak{D}}
+\newcommand{\ddd}{\mathfrak{d}}
 \newcommand{\lb}{\underline}
 \newcommand{\ub}{\overline}
 
@@ -337,16 +345,17 @@
 
 
 %% Commands for revision
-\newcommand{\red}[1]{\textcolor{red}{#1}}
-\newcommand{\blue}[1]{\textcolor{blue}{#1}}
-\newcommand{\green}[1]{\textcolor{darkgreen}{#1}}
-\newcommand{\TYPO}[1]{{\color{orange}{#1}}}
-\newcommand{\MISTAKE}[1]{{\color{violet}{#1}}}
-\newcommand{\REPHRASE}[1]{{\color{darkgreen}{#1}}}
-\newcommand{\REVISE}[1]{{\color{blue}{#1}}}
-\newcommand{\REVISEred}[1]{{\color{red}{#1}}}
+\newcommand{\red}[1]{{\color{red}#1}}
+\newcommand{\blue}[1]{{\color{blue}#1}}
+\newcommand{\green}[1]{{\color{darkgreen}#1}}
+\newcommand{\TYPO}[1]{{\color{orange}#1}}
+\newcommand{\MISTAKE}[1]{{\color{violet}#1}}
+\newcommand{\REPHRASE}[1]{{\color{darkgreen}#1}}
+\newcommand{\REVISE}[1]{{\color{blue}#1}}
+\newcommand{\REVISEred}[1]{{\color{red}#1}}
 \newcommand{\COMMENT}{\todo}  % Needs the todonotes package
 %\newcommand{\COMMENT}[1]{\textcolor{brown}{{\small{(comment: #1)}}}}  % This puts comments inline
+\newcommand{\yl}[1]{{\color{darkyellow}#1}}  % For comments by Cunxin Huang
 
 % Use the following if revision is finished
 %\newcommand{\TYPO}{}
@@ -358,18 +367,19 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\title{Notes}
+\title{Template for Notes}
 
-\date{\DTMnow}
+\date{\today}
 
 \author{
 Cunxin Huang\thanks{
-Department of Applied Mathematics, The Hong Kong Polytechnic University, 
+Department of Applied Mathematics, The Hong Kong Polytechnic University,
 Hong Kong, China ({\tt cun-xin.huang@connect.polyu.hk}).
 }
-\and Zaikun Zhang\thanks{
-  School of Mathematics, Sun Yat-sen University, China ({\tt zhangzaikun@mail.sysu.edu.cn}).
-}
+% \and Zaikun Zhang\thanks{
+% School of Mathematics, Sun Yat-sen University,
+% Guangzhou, China ({\tt zhangzaikun@mail.sysu.edu.cn}).
+% }
 }
 
 
